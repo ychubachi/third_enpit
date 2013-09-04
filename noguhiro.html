@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>Noguhiro</title>
+<style type="text/css" media="screen">
+ul {list-style: none;}
+
+.slider li {float:left;display:none;}
+.slider li a {
+	width:550px;
+	height:550px;
+	background:#fafafa;
+	font-size:300%;
+	font-weight:bold;
+	color:#FFF;
+	text-decoration:none;
+	padding:25px;
+	display:block;
+}
+
+.pager {
+	width:170px;
+	padding-top:20px;
+	margin:0 auto;
+	clear:both;
+}
+.pager li {
+	width:20px;
+	height:20px;
+	background:#397AE6;
+	border-radius:50px;
+	float:left;
+	text-align:center;
+	margin-right:20px;
+}
+.pager li span{
+	text-indent:-9999px;
+	text-align:center;
+	display:block;
+}
+</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+$(window).load(function()
+{
+	var sliderBox = $('.blueberry');
+	var sliderItem = $('.blueberry li');
+	var windowWidth = $(window).width();
+	var minWidth = 200;
+	var margin = 0;
+	var sliderItemSize = sliderItem.size();
+	var pager = $('.pager');
+	var timer = 1000;
+	var timeCount = 0;
+	
+	function init()
+	{
+		sliderWidth();
+		sliderItem.eq(0).show();
+		pagerItemShow();
+		pagerItemClick();
+		sliderWindowResize();
+		imageWidth(0);
+		repeat();
+	}
+	
+	function sliderWidth()
+	{
+		sliderBox.width(windowWidth);
+	}
+	
+	function imageWidth(num)
+	{
+		var imgWidth = sliderItem.eq(num).find('a').width();
+		sliderCenter(imgWidth,num);
+		if(imgWidth >= windowWidth )
+		{
+			sliderItem.eq(num).find('a').clip(windowWidth,460);
+		}
+	}
+	
+	function sliderCenter(imgWidth,num)
+	{
+		if(windowWidth >= imgWidth)
+		{
+			margin = (windowWidth - imgWidth) / 2;
+			sliderItem.eq(num).css('margin-left',margin+'px');
+		}
+	}
+	
+	function sliderWindowResize()
+	{
+		$(window).resize(function()
+		{
+			windowWidth = $(window).width();
+			if(windowWidth >= minWidth)
+			{
+				sliderBox.width(windowWidth);
+			} else {
+				sliderBox.width(minWidth);
+			}
+			imageWidth(getIndex());
+			sliderCenter(sliderItem.eq(getIndex()).find('a').width(),460)
+		});
+	}
+	
+	function sliderChange(num)
+	{
+		sliderItem.hide();
+		sliderItem.eq(num).fadeIn("slow");
+	}
+	
+	function pagerItemShow()
+	{
+		if(sliderItemSize > 0)
+		{
+			for(var i = 0; i < sliderItemSize; i++)
+			{
+				if(i == 0)
+				{
+					pager.append('<li class="active"><a><span>'+i+'</span></a></li>');	
+				} else {
+					pager.append('<li><a><span>'+i+'</span></a></li>');	
+				}
+			}
+		}
+	}
+	
+	function pagerItemClick()
+	{
+		pager.find('li').click(function()
+		{
+			pager.find('li').removeClass('active');
+			$(this).addClass('active');
+			sliderChange(parseInt($(this).find('span').text(),10));
+			imageWidth(getIndex());
+			sliderCenter(sliderItem.eq(getIndex()).find('a').width(),460)
+		});
+	}
+	
+	function pagerItemChange(num)
+	{
+		pager.find('li').removeClass('active');
+		pager.find('li').eq(num).addClass('active');
+	}
+	
+	function getIndex()
+	{
+		return pager.find('li.active').index();
+	}
+	
+	function repeat()
+	{
+		setInterval(function()
+		{
+			timeCount = getIndex()+1 >= sliderItemSize ? 0 : getIndex()+1;
+			sliderChange(timeCount);
+			pagerItemChange(timeCount);
+			imageWidth(timeCount);
+		}
+		,timer);
+	}
+
+	init();
+});
+</script>
+</head>
+<body>
+<div id="wrap">
+	<div id="image-gallery">
+		<div class="blueberry" style="width:970px;margin:0 auto;">
+		<ul class="slider">
+			<li><a href="#" style="background:#397ae6">Hello..</a></li>
+			<li><a href="#" style="background:#ff0">enpit</a></li>
+			<li><a href="#" style="background:#f0f">Hello...</a></li>
+			<li><a href="#" style="background:#0ff">enpit</a></li>
+
+		</ul>
+		<ul class="pager"></ul>
+		</div>		
+	</div>
+</div>
+</body>
+</html>
